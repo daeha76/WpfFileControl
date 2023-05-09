@@ -156,6 +156,10 @@ namespace ExcelControl
                 {
                     fileList.FirstOrDefault().FileCopy(destFolder);
                 }
+                else if (fileList.Count == 0)
+                {
+                    MessageBox.Show($"{dic.Value}({dic.Key})님의 사진을 검색할 수 없습니다.");
+                }
                 else
                 {
                     LoadImageFiles(fileList, dic);

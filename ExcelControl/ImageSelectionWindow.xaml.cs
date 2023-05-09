@@ -2,6 +2,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Security.Policy;
 using System.Windows;
 
 namespace ExcelControl
@@ -20,8 +22,13 @@ namespace ExcelControl
         {
             InitializeComponent();
             imageListBox.ItemsSource = imageFileInfos;
+
+            SearchName = imageFileInfos.FirstOrDefault().SearchName;
+            SearchKey = imageFileInfos.FirstOrDefault().Key;
         }
 
+        public string SearchName { get; set; }
+        public string SearchKey { get; set; }
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             if (imageListBox.SelectedItems.Count > 0)

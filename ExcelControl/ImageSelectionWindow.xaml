@@ -1,0 +1,38 @@
+﻿<Window x:Class="ExcelControl.ImageSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExcelControl"
+        mc:Ignorable="d"
+        Title="ImageSelectionWindow" Height="550" Width="800">
+    <StackPanel>
+        <ListBox x:Name="imageListBox" SelectionMode="Extended">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBox">
+                                <Style.Setters>
+                                    <Setter Property="FontSize" Value="12"/>
+                                </Style.Setters>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Image Source="{Binding ImagePath}" Width="200" Height="200"/>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="{Binding FileName}" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding FilePath}"/>
+                            <TextBlock Text="{Binding LastModified}"/>
+                            <TextBlock />
+                            <TextBlock Text="{Binding Key}" Foreground="Blue"/>
+                            <TextBlock Text="{Binding SearchName}" Foreground="Blue"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="선택항목 복사" Click="CopyButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

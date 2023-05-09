@@ -16,14 +16,14 @@
                 </Style.Setters>
             </Style>
         </StackPanel.Resources>
-        <!--<StackPanel Orientation="Horizontal" Margin="10 10 10 0">
+        <StackPanel Orientation="Horizontal" Margin="10 10 10 0">
             <TextBlock Text="사원명    : "/>
             <TextBlock Text="{Binding SearchName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="10 5">
             <TextBlock Text="사원번호 : "/>
             <TextBlock Text="{Binding SearchKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>-->
+        </StackPanel>
         <Button Content="선택항목 복사" Click="CopyButton_Click" Width="770"/>
         <ListBox x:Name="imageListBox" SelectionMode="Extended"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"

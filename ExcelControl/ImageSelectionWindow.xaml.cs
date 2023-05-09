@@ -13,6 +13,24 @@ namespace ExcelControl
     /// </summary>
     public partial class ImageSelectionWindow : Window
     {
+        public static readonly DependencyProperty SearchNameProperty =
+            DependencyProperty.Register(nameof(SearchName), typeof(string), typeof(ImageSelectionWindow), new PropertyMetadata(string.Empty));
+
+        public static readonly DependencyProperty SearchKeyProperty =
+            DependencyProperty.Register(nameof(SearchKey), typeof(string), typeof(ImageSelectionWindow), new PropertyMetadata(string.Empty));
+
+        public string SearchName
+        {
+            get { return (string)GetValue(SearchNameProperty); }
+            set { SetValue(SearchNameProperty, value); }
+        }
+
+        public string SearchKey
+        {
+            get { return (string)GetValue(SearchKeyProperty); }
+            set { SetValue(SearchKeyProperty, value); }
+        }
+
         public ImageSelectionWindow()
         {
             InitializeComponent();
@@ -25,10 +43,10 @@ namespace ExcelControl
 
             SearchName = imageFileInfos.FirstOrDefault().SearchName;
             SearchKey = imageFileInfos.FirstOrDefault().Key;
+
+            this.DataContext = this;
         }
 
-        public string SearchName { get; set; }
-        public string SearchKey { get; set; }
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             if (imageListBox.SelectedItems.Count > 0)

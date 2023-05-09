@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using ExcelControl.Model;
+using Microsoft.Office.Interop.Excel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -92,7 +93,7 @@ namespace ExcelControl
             Range usedRange = worksheet.UsedRange;
 
             // Define the starting row and column
-            int startRow = 9;
+            int startRow = 7;
             int keyColumn = 19;
             int dataColumn = 5;
 
@@ -111,12 +112,8 @@ namespace ExcelControl
                 {
                     excelDictionary[key] = data;
                 }
-
-                //var b = excelDictionary.Values.Contains(data);
-                //var keya = excelDictionary.FirstOrDefault(x => x.Value== data).Key;
             }
 
-            // Close the workbook and Excel application
             workbook.Close();
             excelApp.Quit();
             MessageBox.Show("엑셀의 내용을 가져왔습니다.");
@@ -146,6 +143,12 @@ namespace ExcelControl
 
         private void CopyFile_Click(object sender, RoutedEventArgs e)
         {
+            if (excelDictionary == null)
+            {
+                MessageBox.Show("Load Excel를 먼저 실행하세요.");
+                return;
+            }
+
             foreach (var dic in excelDictionary)
             {
                 var fileList = fileInfo.Where(f => f.Name.Contains(dic.Value)).ToList();
@@ -160,16 +163,6 @@ namespace ExcelControl
             }
         }
 
-        public class ImageFileInfo
-        {
-            public string ImagePath { get; set; }
-            public string FileName { get; set; }
-            public string FilePath { get; set; }
-            public string LastModified { get; set; }
-            public string Key { get; set; }
-            public string SearchName { get; set; }
-            public string DestFolder { get; set; } = destFolder;
-        }
         public ObservableCollection<ImageFileInfo> ImageFiles { get; set; }
         private void LoadImageFiles(List<FileInfo> fileInfos, KeyValuePair<string,string> dic)
         {
@@ -190,6 +183,7 @@ namespace ExcelControl
                     LastModified = lastModified,
                     Key = dic.Key,
                     SearchName = dic.Value,
+                    DestFolder = destFolder,
                 };
 
                 ImageFiles.Add(imageFileInfo);

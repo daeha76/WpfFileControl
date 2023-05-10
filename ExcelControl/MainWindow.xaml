@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExcelControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="100" Width="450">
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-        <Button Content="Get File Info" Click="GetFileInfo_Click"/>
+        Title="MainWindow" Height="130" Width="450">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center">
+            <Button Content="Get File Info" Click="GetFileInfo_Click"/>
+            <Button Content="Export To Excel" Click="ExportFileNameToExcel_Click"/>
+        </StackPanel>
         <Button Content="Load Excel" Click="LoadExcel_Click"/>
         <Button Content="Copy File" Click="CopyFile_Click"/>
     </StackPanel>

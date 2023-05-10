@@ -2,6 +2,7 @@
 using Microsoft.Office.Interop.Excel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -26,12 +27,21 @@ namespace ExcelControl
         private FileInfo[] fileInfo;
         private Dictionary<string, string> excelDictionary;
         private static string destFolder;
+        Application excelApp;
+        Workbook workbook;
+        Worksheet worksheet;
+        Range usedRange;
+        // Define the starting row and column
+        int startRow = 7;
+        int keyColumn = 7;
+        int dataColumn = 3;
+
         private void GetFileInfo_Click(object sender, RoutedEventArgs e)
         {
-            string pictureFolder = GetFolderString("사진을 불러올");
+            string pictureFolder = GetFolderString("파일을 불러올");
             if (pictureFolder == null) return;
 
-            destFolder = GetFolderString("사진을 저장할");
+            destFolder = GetFolderString("파일을 저장할");
             if (destFolder == null) return;
 
             DirectoryInfo directoryInfo = new DirectoryInfo(pictureFolder);
@@ -78,47 +88,6 @@ namespace ExcelControl
             return folderBrowserDialog.SelectedPath;
         }
 
-        private void LoadExcelData(string filePath)
-        {
-            // Create an Excel Application object
-            Application excelApp = new Application();
-
-            // Open the Excel workbook
-            Workbook workbook = excelApp.Workbooks.Open(filePath);
-
-            // Get the first worksheet
-            Worksheet worksheet = workbook.Sheets[1];
-
-            // Get the used range of the worksheet
-            Range usedRange = worksheet.UsedRange;
-
-            // Define the starting row and column
-            int startRow = 7;
-            int keyColumn = 19;
-            int dataColumn = 5;
-
-            // Create a dictionary to store the data
-            excelDictionary = new Dictionary<string, string>();
-
-            // Iterate through each row from the starting row to the last used row
-            for (int row = startRow; row <= usedRange.Rows.Count; row++)
-            {
-                // Get the key and data values from the specified columns
-                string key = (usedRange.Cells[row, keyColumn] as Range)?.Value?.ToString();
-                string data = (usedRange.Cells[row, dataColumn] as Range)?.Value?.ToString();
-
-                // Add the key-value pair to the dictionary
-                if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(data))
-                {
-                    excelDictionary[key] = data;
-                }
-            }
-
-            workbook.Close();
-            excelApp.Quit();
-            MessageBox.Show("엑셀의 내용을 가져왔습니다.");
-        }
-
         private void LoadExcel_Click(object sender, RoutedEventArgs e)
         {
             if (fileInfo == null)
@@ -138,6 +107,36 @@ namespace ExcelControl
             {
                 string filePath = openFileDialog.FileName;
                 LoadExcelData(filePath);
+            }
+            void LoadExcelData(string filePath)
+            {
+                excelApp = new Application();
+                workbook = excelApp.Workbooks.Open(filePath);
+                worksheet = workbook.Sheets[1];               // Get the first worksheet
+                usedRange = worksheet.UsedRange;              // Get the used range of the worksheet
+
+                
+
+                // Create a dictionary to store the data
+                excelDictionary = new Dictionary<string, string>();
+
+                // Iterate through each row from the starting row to the last used row
+                for (int row = startRow; row <= usedRange.Rows.Count; row++)
+                {
+                    // Get the key and data values from the specified columns
+                    string key = (usedRange.Cells[row, keyColumn] as Range)?.Value?.ToString();
+                    string data = (usedRange.Cells[row, dataColumn] as Range)?.Value?.ToString();
+
+                    // Add the key-value pair to the dictionary
+                    if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(data))
+                    {
+                        excelDictionary[key] = data;
+                    }
+                }
+
+                //workbook.Close();
+                //excelApp.Quit();
+                MessageBox.Show("엑셀의 내용을 가져왔습니다.");
             }
         }
 
@@ -195,6 +194,55 @@ namespace ExcelControl
 
             ImageSelectionWindow imageSelectionWindow = new ImageSelectionWindow(ImageFiles);
             bool? result = imageSelectionWindow.ShowDialog();
+        }
+
+        private void ExportFileNameToExcel_Click(object sender, RoutedEventArgs e)
+        {
+            int writeColumn = 4;
+
+            foreach (var dic in excelDictionary)
+            {
+                var fileList = fileInfo.Where(f => f.Name.Contains(dic.Value)).ToList();
+                if (!fileList.Any())
+                { 
+                    continue; 
+                }
+                else if (fileList.Count >= 2)
+                {
+                    fileList = fileList.Where(f => f.Name.Contains(dic.Key)).ToList();
+                }
+
+                for (int row = startRow; row <= usedRange.Rows.Count; row++)
+                {
+                    // Get the key and data values from the specified columns
+                    string key = (usedRange.Cells[row, keyColumn] as Range)?.Value?.ToString();
+                    string name = (usedRange.Cells[row, dataColumn] as Range)?.Value?.ToString();
+                    string cntstring = (usedRange.Cells[row, keyColumn - 1] as Range)?.Value?.ToString();
+                    int.TryParse(cntstring, out int cnt);
+
+                    if (dic.Value != name)
+                    {
+                        continue;
+                    }
+
+                    if (cnt >= 2)
+                    {
+                        if (dic.Key != key)
+                        {
+                            continue;
+                        }
+                    }
+
+                    usedRange.Cells[row, writeColumn] = fileList.FirstOrDefault().Name;
+                    startRow = ++row;
+                    break;
+                }
+            }
+
+            string destinationFilePath = Path.Combine(destFolder, workbook.Name);
+            workbook.SaveAs(destinationFilePath);
+            workbook.Close();
+            excelApp.Quit();
         }
     }
 }

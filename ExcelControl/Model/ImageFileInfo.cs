@@ -1,5 +1,5 @@
-﻿namespace ExcelControl.Model
-{
+namespace ExcelControl.Model;
+
     public class ImageFileInfo
     {
         public string ImagePath { get; set; }
@@ -10,4 +10,3 @@
         public string SearchName { get; set; }
         public string DestFolder { get; set; }
     }
-}
